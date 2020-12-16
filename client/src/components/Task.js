@@ -3,6 +3,7 @@ import "./bootstrap.min.css"
 import * as Icon from 'react-bootstrap-icons'
 import { useState, useEffect } from "react";
 import { updateTask } from "../sockets";
+import ReactMarkdown from 'react-markdown'
 
 
 function Task({ task, index, deleteTask, raiseTask, lowerTask }) {
@@ -19,7 +20,13 @@ function Task({ task, index, deleteTask, raiseTask, lowerTask }) {
     const [inputsValues, setInputsValues] = useState({ title: task.title, content: task.content })
 
     function setEditMode(e) {
-        setEditing(e.target.id)
+        let elem = e.target
+        let id = elem.id
+        while (id === undefined || id === "") {
+            elem = elem.parentNode
+            id = elem.id
+        }
+        setEditing(id)
     }
 
     useEffect(() => {
@@ -31,6 +38,7 @@ function Task({ task, index, deleteTask, raiseTask, lowerTask }) {
     useEffect(() => {
         document.onmouseup = saveSize.bind(null, changeSizeMode)
     }, [changeSizeMode])
+
     function unsetEditMode(e) {
         if (e.target.textContent === "Save") {
             setTaskValues({...taskValues, ...{
@@ -40,6 +48,7 @@ function Task({ task, index, deleteTask, raiseTask, lowerTask }) {
         }
         setEditing("")
     }
+
     function inputsHandler(e) {
         setInputsValues({...inputsValues, ...{
             [e.target.name]: e.target.value
@@ -155,26 +164,26 @@ function Task({ task, index, deleteTask, raiseTask, lowerTask }) {
                     id="title"
                     onClick={setEditMode}
                 >{taskValues.title}</h5>
-
-                <p className="card-text"
+                <span className="card-text"
                    style={{
                        display: editing !== "content" ? 'block' : "none",
                        userSelect: 'none',
-                       height: `${String(size.h)}px`
+                       /*height: `${String(size.h)}px`*/
                    }}
                    onClick={setEditMode}
                    id="content"
-                >{taskValues.content}</p>
+                ><ReactMarkdown>{taskValues.content}</ReactMarkdown></span>
+
 
                 <div className="col"
                      style={{
                          display: editing === "content" ? "block" : "none",
-                         height: `${size.h < 110 ? "110" : String(size.h)}px`
+                         /*height: `${size.h < 110 ? "110" : String(size.h)}px`*/
                      }}
                 >
                     <textarea className="form-control"
                               onInput={inputsHandler}
-                              style={{ resize: "none", outline: 'none' }}
+                              style={{ outline: 'none' }}
                               name="content"
                               value={inputsValues.content}
                     />
@@ -184,6 +193,7 @@ function Task({ task, index, deleteTask, raiseTask, lowerTask }) {
                     </div>
                 </div>
             </div>
+            <div style={{ width: "100%", height: `${String(size.h)}px` }}> </div>
         </div>
     )
 }

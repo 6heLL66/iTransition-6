@@ -9,7 +9,7 @@ function TasksList({ tasks }) {
             title: "New Task",
             content: "Edit Me",
             color: "",
-            size: { w: 1, h: 25 }
+            size: { w: 1, h: 5 }
         })
         sendTasks(tasks)
     }

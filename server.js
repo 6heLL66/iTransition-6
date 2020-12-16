@@ -5,7 +5,7 @@ const server = require("http").createServer(app)
 
 const PORT = process.env.PORT || 5000
 
-let allTasks = [{ title: "test", content: "text task", color: "", size: { w: 1, h: 25 } }]
+let allTasks = []
 
 server.listen(PORT, () => {
     console.log("server has been started on port 5000")
