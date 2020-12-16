@@ -31,6 +31,7 @@ function Task({ task, index, deleteTask, raiseTask, lowerTask }) {
 
     useEffect(() => {
         setTaskValues({...task})
+        setInputValues({...task})
         setColor(task.color)
         if (task.size.w * box.clientWidth > 330) setSize({ w: task.size.w * box.clientWidth, h: task.size.h })
         else setSize({ w: box.clientWidth, h: task.size.h })
