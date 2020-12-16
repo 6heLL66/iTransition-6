@@ -13,19 +13,20 @@ function TasksList({ tasks }) {
         })
         sendTasks(tasks)
     }
-    function deleteTask(index) {
+    function deleteTask(index, editing) {
+        if (editing !== "") return
         tasks.splice(index, 1)
         sendTasks(tasks)
     }
-    function raiseTask(index) {
-        if (index === 0) return
+    function raiseTask(index, editing) {
+        if (index === 0 || editing !== "") return
         const buffer = tasks[index]
         tasks[index] = tasks[index - 1]
         tasks[index - 1] = buffer
         sendTasks(tasks)
     }
-    function lowerTask(index) {
-        if (index === tasks.length - 1) return
+    function lowerTask(index, editing) {
+        if (index === tasks.length - 1 || editing !== "") return
         const buffer = tasks[index]
         tasks[index] = tasks[index + 1]
         tasks[index + 1] = buffer

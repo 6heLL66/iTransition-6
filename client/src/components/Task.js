@@ -38,7 +38,8 @@ function Task({ task, index, deleteTask, raiseTask, lowerTask }) {
     }, [task, box])
     useEffect(() => {
         document.onmouseup = saveSize.bind(null, changeSizeMode)
-    }, [changeSizeMode])
+        document.onmousemove = e => changeSize (e, changeSizeMode)
+    }, [changeSizeMode, saveSize])
 
     function unsetEditMode(e) {
         if (e.target.textContent === "Save") {
@@ -68,7 +69,7 @@ function Task({ task, index, deleteTask, raiseTask, lowerTask }) {
         setChangeSizeMode(false)
     }
 
-    function changeSize(e) {
+    function changeSize(e, changeSizeMode) {
         if (!changeSizeMode) return
         const deltaX = e.pageX - changeSizeMode.pageX
         const deltaY = e.pageY - changeSizeMode.pageY
@@ -76,7 +77,7 @@ function Task({ task, index, deleteTask, raiseTask, lowerTask }) {
         if (size.w + deltaX < box.clientWidth
             && size.w + deltaX > 0.4 * box.clientWidth
             && size.w + deltaX > 330) x = true
-        if (size.h + deltaY >= 25) y = true
+        if (size.h + deltaY >= 5) y = true
         if (x && !y) setSize({ ...size, w: size.w + deltaX })
         else if (!x && y) setSize({ ...size, h: size.h + deltaY })
         else if (x && y) setSize({ w: size.w + deltaX, h: size.h + deltaY })
@@ -117,21 +118,20 @@ function Task({ task, index, deleteTask, raiseTask, lowerTask }) {
              onMouseLeave={hideColors}
         >
             <Icon.XCircle className="close"
-                    onClick={() => deleteTask(index)}
+                    onClick={() => deleteTask(index, editing)}
                     opacity={colorsOpacity}
             />
             <Icon.ArrowDownCircle className="toBottom"
-                                  onClick={() => lowerTask(index)}
+                                  onClick={() => lowerTask(index, editing)}
                                   opacity={colorsOpacity}
             />
             <Icon.ArrowUpCircle className="toTop"
-                                onClick={() => raiseTask(index)}
+                                onClick={() => raiseTask(index, editing)}
                                 opacity={colorsOpacity}
             />
             <Icon.CaretDownFill className="resize"
                                 opacity={colorsOpacity}
                                 onMouseDown={(e) => setChangeSizeMode({...e})}
-                                onMouseMove={changeSize}
             />
             <div className="row colors" style={{ opacity: colorsOpacity }}>
                 <div className="color-box col-1" onClick={changeColor}>

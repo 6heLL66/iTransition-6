@@ -4,7 +4,6 @@ const socket = openSocket()
 
 function updateTasks(callback) {
     socket.on("updateTasks", (tasks) => {
-        console.log(tasks)
         callback(tasks)
     })
 }
