@@ -1,0 +1,86 @@
+input {
+    outline: none !important;
+    transition: unset !important;
+}
+textarea {
+    outline: none !important;
+    transition: unset !important;
+}
+.colors {
+    height: 20px;
+    position: absolute;
+    top: 10px;
+    left: 25px;
+}
+.color-box {
+    height: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-left: 5px;
+    background: #ede9e9;
+    border-radius: 25%;
+    cursor: pointer;
+}
+.color-box:hover{
+    background: #b8cccc;
+}
+.color {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%
+}
+.pink {
+    background: #e15764 !important;
+    color: white;
+}
+.blue {
+    background: #5050c0 !important;
+    color: white;
+}
+.yellow {
+    background: #c5c553 !important;
+    color: white;
+}
+.close {
+    position: absolute;
+    top: 12px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
+.close:hover {
+    color: #0d6efd;
+}
+.toBottom {
+    position: absolute;
+    font-size: 20px;
+    top: 12px;
+    right: 40px;
+    cursor: pointer;
+}
+.toTop {
+    position: absolute;
+    font-size: 20px;
+    top: 12px;
+    right: 65px;
+    cursor: pointer;
+}
+.toBottom:hover {
+    color: #0d6efd;
+}
+.toTop:hover {
+    color: #0d6efd;
+}
+.resize {
+    transform: rotate(-45deg);
+    position: absolute;
+    bottom: -10px;
+    right: -10px;
+    font-size: 28px;
+    cursor: pointer;
+}
+.resize:hover {
+    color: #0d6efd;
+}

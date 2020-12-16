@@ -1,0 +1,7 @@
+/node_modules
+/.idea
+<<<<<<< HEAD
+/client/build
+/client/node_modules
+=======
+>>>>>>> 3d5984b57b79fdb78e1241fc7c1d0b28d43ac0af
