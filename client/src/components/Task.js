@@ -6,16 +6,18 @@ import { updateTask } from "../sockets";
 import ReactMarkdown from 'react-markdown'
 
 
-function Task({ task, index, deleteTask, raiseTask, lowerTask }) {
-    const box = document.getElementById("box")
+function Task({ task, index, deleteTask, workSpaceSize }) {
     const [editing, setEditing] = useState("")
     const [color, setColor] = useState(task.color)
-    const [changeSizeMode, setChangeSizeMode] = useState(false)
-    const [size, setSize] = useState({ w: task.size.w * box.offsetWidth,
-                                                h: task.size.h })
+
+    const [changeMode, setChangeMode] = useState(false)
+    const [size, setSize] = useState({...task.size})
+    const [pos, setPos] = useState({...task.pos})
+
     const [colorsOpacity, setColorsOpacity] = useState(0)
     const [colorsAnim, setColorsAnim] = useState(0)
     const [isAnimation, setIsAnimation] = useState("")
+
     const [taskValues, setTaskValues] = useState({ title: task.title, content: task.content })
     const [inputsValues, setInputsValues] = useState({ title: task.title, content: task.content })
 
@@ -32,14 +34,14 @@ function Task({ task, index, deleteTask, raiseTask, lowerTask }) {
     useEffect(() => {
         setTaskValues({...task})
         setInputsValues({...task})
+        setPos({...task.pos})
+        setSize({...task.size})
         setColor(task.color)
-        if (task.size.w * box.clientWidth > 330) setSize({ w: task.size.w * box.clientWidth, h: task.size.h })
-        else setSize({ w: box.clientWidth, h: task.size.h })
-    }, [task, box])
+    }, [task])
     useEffect(() => {
-        document.onmouseup = saveSize.bind(null, changeSizeMode)
-        document.onmousemove = e => changeSize (e, changeSizeMode)
-    }, [changeSizeMode, saveSize])
+        document.onmouseup = saveChange.bind(null, changeMode)
+        document.onmousemove = e => changeProps (e, changeMode)
+    }, [changeMode, saveChange])
 
     function unsetEditMode(e) {
         if (e.target.textContent === "Save") {
@@ -63,25 +65,37 @@ function Task({ task, index, deleteTask, raiseTask, lowerTask }) {
         updateTask({ index, task: {...taskValues, color } })
         setColor(color)
     }
-    function saveSize() {
-        if (!changeSizeMode) return
-        updateTask({index, task: {...taskValues, size: { w: size.w / box.clientWidth, h: size.h }}})
-        setChangeSizeMode(false)
+    function saveChange() {
+        if (!changeMode) return
+        updateTask({index, task: {
+                ...taskValues,
+                size: { w: size.w, h: size.h },
+                pos : { x: pos.x, y: pos.y }
+        }})
+        setChangeMode(false)
     }
 
-    function changeSize(e, changeSizeMode) {
-        if (!changeSizeMode) return
-        const deltaX = e.pageX - changeSizeMode.pageX
-        const deltaY = e.pageY - changeSizeMode.pageY
+    function changeProps(e, changeMode) {
+        if (!changeMode) return
+        const deltaX = e.pageX - changeMode.e.pageX
+        const deltaY = e.pageY - changeMode.e.pageY
         let x = false, y = false
-        if (size.w + deltaX < box.clientWidth
-            && size.w + deltaX > 0.4 * box.clientWidth
-            && size.w + deltaX > 330) x = true
-        if (size.h + deltaY >= 5) y = true
-        if (x && !y) setSize({ ...size, w: size.w + deltaX })
-        else if (!x && y) setSize({ ...size, h: size.h + deltaY })
-        else if (x && y) setSize({ w: size.w + deltaX, h: size.h + deltaY })
-        setChangeSizeMode(e)
+        if (changeMode.change === "size") {
+            if (size.w + deltaX > 300) x = true
+            if (size.h + deltaY >= 5) y = true
+            if (x && !y) setSize({ ...size, w: size.w + deltaX })
+            else if (!x && y) setSize({ ...size, h: size.h + deltaY })
+            else if (x && y) setSize({ w: size.w + deltaX, h: size.h + deltaY })
+            setChangeMode({ e, change: "size" })
+        }
+        else if (changeMode.change === "pos") {
+            if (pos.x + deltaX > 0 && pos.x + deltaX + size.w <= workSpaceSize.w) x = true
+            if (pos.y + deltaY > 0 && pos.y + deltaY + size.h <= workSpaceSize.h) y = true
+            if (x && !y) setPos({ ...pos, x: pos.x + deltaX })
+            else if (!x && y) setPos({ ...pos, y: pos.y + deltaY })
+            else if (x && y) setPos({ x: pos.x + deltaX, y: pos.y + deltaY })
+            setChangeMode({ e, change: "pos" })
+        }
     }
     function showColors() {
         if (isAnimation === "hide") clearInterval(colorsAnim)
@@ -113,7 +127,12 @@ function Task({ task, index, deleteTask, raiseTask, lowerTask }) {
     }
     return (
         <div className={`card pt-4 mt-3 ${color}`}
-             style={{ width: `${String(size.w - 28)}px` }}
+             style={{
+                 width: `${String(size.w)}px`,
+                 position: "absolute",
+                 top: `${pos.y}px`,
+                 left: `${pos.x}px`
+             }}
              onMouseEnter={showColors}
              onMouseLeave={hideColors}
         >
@@ -121,17 +140,13 @@ function Task({ task, index, deleteTask, raiseTask, lowerTask }) {
                     onClick={() => deleteTask(index, editing)}
                     opacity={colorsOpacity}
             />
-            <Icon.ArrowDownCircle className="toBottom"
-                                  onClick={() => lowerTask(index, editing)}
-                                  opacity={colorsOpacity}
-            />
-            <Icon.ArrowUpCircle className="toTop"
-                                onClick={() => raiseTask(index, editing)}
-                                opacity={colorsOpacity}
+            <Icon.ArrowsMove className="move"
+                             opacity={colorsOpacity}
+                             onMouseDown={(e) => setChangeMode({ e, change: "pos" })}
             />
             <Icon.CaretDownFill className="resize"
                                 opacity={colorsOpacity}
-                                onMouseDown={(e) => setChangeSizeMode({...e})}
+                                onMouseDown={(e) => setChangeMode({ e, change: "size" })}
             />
             <div className="row colors" style={{ opacity: colorsOpacity }}>
                 <div className="color-box col-1" onClick={changeColor}>
@@ -179,7 +194,6 @@ function Task({ task, index, deleteTask, raiseTask, lowerTask }) {
                 <div className="col"
                      style={{
                          display: editing === "content" ? "block" : "none",
-                         /*height: `${size.h < 110 ? "110" : String(size.h)}px`*/
                      }}
                 >
                     <textarea className="form-control"

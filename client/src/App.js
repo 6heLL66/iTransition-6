@@ -1,5 +1,5 @@
 import './App.css';
-import TasksList from './components/TasksList'
+import WorkSpace from './components/WorkSpace'
 import { updateTasks } from './sockets.js'
 import { useState, useEffect } from "react"
 
@@ -9,11 +9,12 @@ import { useState, useEffect } from "react"
 
 function App() {
     const [tasks, setTasks] = useState([])
+    const [size, setSize] = useState({ w: 1000, h: 1000 })
     useEffect(() => {
-        updateTasks(setTasks)
+        updateTasks(setTasks, setSize)
     }, [])
     return (
-        <TasksList tasks={tasks}/>
+        <WorkSpace tasks={tasks} size={size} />
     )
 }
 

@@ -6,6 +6,7 @@ const server = require("http").createServer(app)
 const PORT = process.env.PORT || 5000
 
 let allTasks = []
+let WorkSpaceSize = { w: 1920, h: 1080 }
 
 server.listen(PORT, () => {
     console.log("server has been started on port 5000")
@@ -23,13 +24,13 @@ const io = require("socket.io")(server)
 io.on("connection", socket => {
     socket.on("newTasks", tasks => {
         allTasks = tasks
-        socket.broadcast.emit("updateTasks", allTasks)
-        socket.emit("updateTasks", allTasks)
+        socket.broadcast.emit("updateTasks", { tasks: allTasks, size: WorkSpaceSize })
+        socket.emit("updateTasks", { tasks: allTasks, size: WorkSpaceSize })
     })
     socket.on("updateTask", data => {
         allTasks[data.index] = {...data.task}
-        socket.broadcast.emit("updateTasks", allTasks)
-        socket.emit("updateTasks", allTasks)
+        socket.broadcast.emit("updateTasks", { tasks: allTasks, size: WorkSpaceSize })
+        socket.emit("updateTasks", { tasks: allTasks, size: WorkSpaceSize })
     })
-    socket.emit("updateTasks", allTasks)
+    socket.emit("updateTasks", { tasks: allTasks, size: WorkSpaceSize })
 })

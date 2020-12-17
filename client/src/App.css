@@ -53,24 +53,14 @@ textarea {
 .close:hover {
     color: #0d6efd;
 }
-.toBottom {
+.move {
+    font-size: 18px;
     position: absolute;
-    font-size: 20px;
     top: 12px;
+    cursor: pointer;
     right: 40px;
-    cursor: pointer;
 }
-.toTop {
-    position: absolute;
-    font-size: 20px;
-    top: 12px;
-    right: 65px;
-    cursor: pointer;
-}
-.toBottom:hover {
-    color: #0d6efd;
-}
-.toTop:hover {
+.move:hover {
     color: #0d6efd;
 }
 .resize {

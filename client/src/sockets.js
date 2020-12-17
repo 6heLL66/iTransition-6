@@ -2,9 +2,11 @@ import openSocket from 'socket.io-client'
 
 const socket = openSocket()
 
-function updateTasks(callback) {
-    socket.on("updateTasks", (tasks) => {
-        callback(tasks)
+function updateTasks(callback1, callback2) {
+    socket.on("updateTasks", (data) => {
+        console.log(data)
+        callback1(data.tasks)
+        callback2(data.size)
     })
 }
 function sendTasks(tasks){
